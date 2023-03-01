@@ -28,6 +28,8 @@ class Question
     Question.new(question.first)
   end
 
+
+
   def self.find_by_author_id(author_id)
     questions = QuestionDBConnection.instance.execute(<<-SQL, author_id)
       SELECT
@@ -46,6 +48,18 @@ class Question
     @title = questions['title']
     @body = questions['body']
     @associated_author = questions['associated_author']
+  end
+
+  def insert
+    raise "#{self} already in database" if self.id
+
+    QuestionDBConnection.instance.execute(<<-SQL, self.title, self.body, self.associated_author)
+    INSERT INTO 
+      questions ( title, body, associated_author)
+    VALUES
+      (?, ?, ?)
+    SQL
+    self.id = QuestionDBConnection.instance.last_insert_row_id
   end
 
   def author

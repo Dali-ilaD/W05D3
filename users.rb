@@ -1,4 +1,5 @@
-require_relative 'questions.rb'
+require_relative 'question.rb'
+require_relative 'reply.rb'
 
 require 'sqlite3'
 
@@ -10,6 +11,18 @@ class Users
     @id = options['id']
     @fname = options['fname']
     @lname = options['lname']
+  end
+
+  def insert
+    raise "#{self} already in database" if self.id
+
+    QuestionDBConnection.instance.execute(<<-SQL, self.fname, self.lname)
+    INSERT INTO 
+      users ( fname, lname)
+    VALUES
+      (?, ?)
+    SQL
+    self.id = QuestionDBConnection.instance.last_insert_row_id
   end
 
   def self.find_by_name(fname, lname)
