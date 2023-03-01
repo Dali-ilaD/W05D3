@@ -1,4 +1,5 @@
 require 'singleton'
+require 'sqlite3'
 
 class QuestionDBConnection < SQLite3::Database
   include Singleton
@@ -36,7 +37,7 @@ class Question
       WHERE
         associated_author = ?
     SQL
-    return nil unless question.length > 0
+    return nil unless questions.length > 0
     questions.map {|question| Question.new(question)}
   end
 
@@ -48,16 +49,16 @@ class Question
   end
 
   def author
-    question = QuestionDBConnection.instance.execute(<<-SQL, @associated_author)
+    question = QuestionDBConnection.instance.execute(<<-SQL, self.associated_author)
       SELECT
-        associated_author
+        fname, lname
       FROM
-        questions
+        users
       WHERE
-        associated_author = ?
+        id = ?
     SQL
     return nil unless question.length > 0
-    Question.new(question.first)
+    Users.new(question.first)
   end
 
   def replies 
@@ -65,6 +66,13 @@ class Question
     replies.map {|reply| reply.body}
   end
 end
+
+
+
+
+
+
+
 
 
 

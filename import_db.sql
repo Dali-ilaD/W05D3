@@ -11,7 +11,6 @@ CREATE TABLE users (
    id INTEGER PRIMARY KEY,
    fname TEXT NOT NULL,
    lname TEXT NOT NULL
-
 );
 
 CREATE TABLE questions(
@@ -49,9 +48,9 @@ CREATE TABLE questions_likes (
 );
 
 INSERT INTO
-users(fname,lname)
+users(id, fname,lname)
 VALUES 
-( 'NED', 'FLANDERS');
+('NED', 'FLANDERS');
 
 INSERT INTO
 questions(title, body, associated_author)

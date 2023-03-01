@@ -1,5 +1,6 @@
 require_relative 'questions.rb'
 require_relative 'users.rb'
+require 'sqlite3'
 
 class Reply 
 
@@ -12,6 +13,7 @@ class Reply
       @parent_replys = options['parent_replys']
       @user_author = options['user_author']
       @body = options['body']
+      self.id = PlayDBConnection.instance.last_insert_row_id
     end
   
     def self.find_by_question_id(question_id)
@@ -29,7 +31,7 @@ class Reply
   
     def self.find_by_user_id(user_id)
   
-      replys = QuestionDBConnection.instance.execute (<<-SQL, user_id)
+      replys = QuestionDBConnection.instance.execute(<<-SQL, user_id)
         SELECT
           *
         FROM
@@ -42,7 +44,7 @@ class Reply
     end
   
     def author
-      author = QuestionDBConnection.instance.execute (<<-SQL, @user_author)
+      author = QuestionDBConnection.instance.execute(<<-SQL, @user_author)
         SELECT
         user_author
         FROM 
@@ -55,7 +57,7 @@ class Reply
     end
   
     def question
-      questions = QuestionDBConnection.instance.execute (<<-SQL, @subject_question)
+      questions = QuestionDBConnection.instance.execute(<<-SQL, self.subject_question)
         SELECT 
           body
         FROM
@@ -68,7 +70,7 @@ class Reply
     end
   
     def parent_reply
-      parent_reply = QuestionDBConnection.instance.execute(<<-SQL, @parent_replys)
+      parent_reply = QuestionDBConnection.instance.execute(<<-SQL, self.parent_replys)
         SELECT
           body
         FROM
@@ -81,7 +83,7 @@ class Reply
     end
   
     def child_reply
-      child_replys = QuestionDBConnection.instance.execute(<<-SQL, @id)
+      child_replys = QuestionDBConnection.instance.execute(<<-SQL, self.id)
         SELECT
           body
         FROM
@@ -92,7 +94,4 @@ class Reply
       return nil unless child_reply.length > 0
       child_replys.map {|child_reply| Reply.new(child_reply)}
     end
-  
-  
-  
   end
