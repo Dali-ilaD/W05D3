@@ -18,6 +18,7 @@ CREATE TABLE questions(
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL,
     body TEXT NOT NULL,
+    author TEXT NOT NULL,
     associated_author INTEGER NOT NULL,
     FOREIGN KEY(associated_author)REFERENCES users(id)
 );
