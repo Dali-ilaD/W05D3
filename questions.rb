@@ -12,7 +12,7 @@ end
 
 class Question
 
-  attr_reader :title, :body
+  attr_accessor :id, :title, :body, :associated_author
   
   def self.find_by_id(id)
     question = QuestionDBConnection.instance.execute(<<-SQL, id)
@@ -59,89 +59,17 @@ class Question
     return nil unless question.length > 0
     Question.new(question.first)
   end
+
+  def replies 
+    replies = Reply.find_by_question_id(self.id)
+    replies.map {|reply| reply.body}
+  end
 end
 
 
-class Reply 
-
-  attr_reader :subject, :subject_questions, :body
-
-  def initialize(options)
-    @id = options['id']
-    @subject = options['subject']
-    @subject_questions = options['subject_questions']
-    @parent_replys = options['parent_replys']
-    @user_author = options['user_author']
-    @body = options['body']
-  end
-
-  def self.find_by_user_id(user_id)
-
-    replys = QuestionDBConnection.instance.execute (<<-SQL, @user_id)
-      SELECT
-        *
-      FROM
-        replys
-      WHERE
-        user_author = ?
-    SQL
-      return nil unless replys.length > 0
-      replys.map {|reply| Reply.new(reply)}
-  end
-
-  def author
-    author = QuestionDBConnection.instance.execute (<<-SQL, @user_author)
-      SELECT
-      user_author
-      FROM 
-      replys
-      WHERE
-      user_author = ?
-    SQL
-    return nil unless questions.length > 0
-    Replys.new(author.first)
-  end
-
-  def question
-    questions = QuestionDBConnection.instance.execute (<<-SQL, @subject_question)
-      SELECT 
-        body
-      FROM
-        replys
-      WHERE
-      subject_question = ?
-    SQL
-    return nil unless questions.length > 0
-    Reply.new(questions.first)
-  end
-
-  def parent_reply
-    parent_reply = QuestionDBConnection.instance.execute(<<-SQL, @parent_replys)
-      SELECT
-        body
-      FROM
-        replys
-      WHERE
-        parent_replys = ?
-    SQL
-    return nil if parent_reply.length < 0
-    Reply.new(parent_reply.first)
-  end
-
-  def child_reply
-    child_replys = QuestionDBConnection.instance.execute(<<-SQL, @id)
-      SELECT
-        body
-      FROM
-        replys
-      WHERE
-        parent_reply = ?
-    SQL
-    return nil unless child_reply.length > 0
-    child_replys.map {|child_reply| Reply.new(child_reply)}
-  end
 
 
 
-end
+
+
 
