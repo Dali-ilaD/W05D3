@@ -34,7 +34,7 @@ CREATE TABLE replys (
     subject TEXT NOT NULL,
     subject_question INTEGER NOT NULL,
     parent_replys INTEGER NOT NULL,
-    user_author TEXT NOT NULL,
+    user_author INTEGER NOT NULL,
     body TEXT NOT NULL,
     FOREIGN KEY(parent_replys)REFERENCES replys(id),
     FOREIGN KEY(user_author)REFERENCES users(id),

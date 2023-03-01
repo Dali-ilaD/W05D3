@@ -59,3 +59,58 @@ class Question
   end
 end
 
+
+class Reply 
+
+  def initialize(options)
+    @id = options['id']
+    @subject = options['subject']
+    @subject_questions = options['subject_questions']
+    @parent_replys = options['parent_replys']
+    @user_author = options['user_author']
+    @body = options['body']
+  end
+
+  def self.find_by_user_id(user_id)
+
+    replys = QuestionDBConnection.instance.execute (<<-SQL, user_id)
+      SELECT
+        *
+      FROM
+        replys
+      WHERE
+        user_author = ?
+    SQL
+      return nil unless replys.length > 0
+      replys.map {|reply| Reply.new(reply)}
+  end
+
+  def author
+    author = QuestionDBConnection.instance.execute (<<-SQL, user_author)
+      SELECT
+      user_author
+      FROM 
+      replys
+      WHERE
+      user_author = ?
+    SQL
+    return nil unless questions.length > 0
+    Replys.new(author.first)
+  end
+
+  def question
+    questions = QuestionDBConnection.instance.execute (<<-SQL, subject_question)
+      SELECT 
+        subject
+      FROM
+        replys
+      WHERE
+      subject_question = ?
+    SQL
+    return nil unless questions.length > 0
+    Reply.new(questions.first)
+  end
+
+
+end
+
