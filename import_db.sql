@@ -48,11 +48,20 @@ CREATE TABLE questions_likes (
 );
 
 INSERT INTO
-users(id, fname,lname)
+users(fname,lname)
 VALUES 
-('NED', 'FLANDERS');
+('NED', 'FLANDERS'),
+('KUSH', 'PURPLE');
 
 INSERT INTO
-questions(title, body, associated_author)
+    questions(title, body, author, associated_author)
 VALUES
-('Ned question', 'NEDNEDNED', (SELECT id FROM users WHERE fname = 'NED'));
+    ('Ned question', 'NEDNEDNED', (SELECT fname FROM users WHERE fname = 'NED'), (SELECT id FROM users WHERE fname = 'NED')),
+    ('Kush Question', 'KUSH KUSH KUSH', (SELECT fname FROM users WHERE fname = 'KUSH'), (SELECT id FROM users WHERE fname = 'KUSH'));
+
+INSERT INTO
+    questions_follows(questions_id, users_id)
+VALUES
+((SELECT id FROM questions WHERE questions.title LIKE 'Ned%'),(SELECT associated_author FROM questions WHERE questions.title LIKE 'Ned%')),
+-- ((SELECT id FROM questions WHERE questions.title LIKE 'Ned%'),(SELECT associated_author FROM questions WHERE questions.title LIKE 'Kush%')),
+((SELECT id FROM questions WHERE questions.title LIKE 'Kush%'),(SELECT associated_author FROM questions WHERE questions.title LIKE 'Kush%'));

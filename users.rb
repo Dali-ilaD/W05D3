@@ -1,5 +1,6 @@
 require_relative 'question.rb'
 require_relative 'reply.rb'
+require_relative 'question_follow.rb'
 
 require 'sqlite3'
 
@@ -46,5 +47,9 @@ class Users
   def authored_replies
     replies = Reply.find_by_user_id(self.id)
     replies.map {|reply| reply.body}
+  end
+
+  def followed_questions
+    questions_followed = QuestionFollow.followed_questions_for_user_id(self.id)
   end
 end

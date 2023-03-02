@@ -26,15 +26,15 @@ class QuestionFollow
     def self.followers_for_question_id(question_id)
         followers = QuestionDBConnection.instance.execute(<<-SQL, question_id)
         SELECT
-        *
+            *
         FROM
-        users
+            users
         JOIN
-        questions_follows
+            questions_follows
         ON 
-        users.id = questions_follows.users_id
+            users.id = questions_follows.users_id
         WHERE
-        questions_id = ?
+            questions_id = ?
         SQL
         return nil unless followers.length > 0
         followers.map{|follower| Users.new(follower)}
@@ -53,7 +53,9 @@ class QuestionFollow
         WHERE
         questions_follows.users_id = ?
         SQL
-        return nil unless followers.length > 0
+        return nil unless questions.length > 0
         questions.map {|question| Question.new(question)}
     end
+
+
 end

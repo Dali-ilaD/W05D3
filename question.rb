@@ -1,5 +1,7 @@
 require 'singleton'
 require 'sqlite3'
+require_relative 'question_follow.rb'
+require_relative 'users.rb'
 
 class QuestionDBConnection < SQLite3::Database
   include Singleton
@@ -27,8 +29,6 @@ class Question
     return nil unless question.length > 0
     Question.new(question.first)
   end
-
-
 
   def self.find_by_author_id(author_id)
     questions = QuestionDBConnection.instance.execute(<<-SQL, author_id)
@@ -79,8 +79,16 @@ class Question
     replies = Reply.find_by_question_id(self.id)
     replies.map {|reply| reply.body}
   end
+
+  def followers
+    question = QuestionFollow.followers_for_question_id(self.id)
+  end
 end
 
+# ned = Users.find_by_name('NED','FLANDERS')
+# question1 = Question.find_by_author_id(ned.id)
+# # p ned.followed_questions
+# # p question1[0].followers
 
 
 
